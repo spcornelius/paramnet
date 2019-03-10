@@ -11,7 +11,7 @@ tests = ['paramnet.tests']
 tests_require = ['pytest>=2.9.2']
 
 extras_req = {
-    'testing': ['pytest', 'pytest-cov', 'pytest-flakes', 'pytest-pep8', 'rstcheck']
+    'testing': ['pytest', 'pytest-pep8']
 }
 
 extras_req['all'] = list(chain(extras_req.values()))
