@@ -5,7 +5,7 @@ python:
   - "3.6"
   - "3.7"
 install:
-  - python -m pip install --user .[all]
+  - python -m pip install .[all]
 script:
   - PYTHONPATH=$(pwd) python -m pytest --pep8 --ignore setup.py --ignore build/
 notifications:
