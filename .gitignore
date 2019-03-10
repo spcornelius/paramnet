@@ -1,0 +1,8 @@
+.idea/
+.envrc
+environment.yml
+**/.ipynb_checkpoints/
+**/*.pyc
+**/__pycache__
+.*cache/
+*.egg-info/
