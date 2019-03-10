@@ -1,4 +1,5 @@
-from paramnet.exceptions import ParametrizedNetworkError, NodeParameterError, EdgeParameterError
+from paramnet.exceptions import ParametrizedNetworkError, NodeParameterError, \
+    EdgeParameterError
 
 __all__ = []
 __all__.extend([
@@ -18,7 +19,8 @@ class AttrDict(dict):
         super().__init__(*args, **kwargs)
         if not set(self.required_attrs) <= set(self):
             raise self._exception(
-                f"Can't create {self._node_edge} without all required attributes: {self.required_attrs}.")
+                f"Can't create {self._node_edge} without all required "
+                f"attributes: {self.required_attrs}.")
 
     @property
     def required_attrs(self):
@@ -26,19 +28,22 @@ class AttrDict(dict):
 
     def __delitem__(self, k):
         if k in self._equired_attrs:
-            raise self._exception(f"Can't delete required {self._node_edge} attribute '{k}'.")
+            raise self._exception(
+                f"Can't delete required {self._node_edge} attribute '{k}'.")
         super().__delitem__(k)
 
     def clear(self):
         if self.required_attrs:
             raise self._exception(
-                f"Can't clear the following required {self._node_edge} attributes: {self.required_attrs}")
+                f"Can't clear the following required {self._node_edge} "
+                f"attributes: {self.required_attrs}")
         super().clear()
 
     def pop(self, k, default=None):
         if k in self.required_attrs:
             if default is None:
-                raise self._exception(f"Can't pop required {self._node_edge} attribute '{k}'.")
+                raise self._exception(
+                    f"Can't pop required {self._node_edge} attribute '{k}'.")
             return default
         return super().pop(k, default)
 
@@ -46,7 +51,9 @@ class AttrDict(dict):
         k, v = super().popitem()
         if k in self.required_attrs:
             self[k] = v
-            raise self._exception(f"Cannot pop required {self._node_edge} attribute '{k}' for {self._el}")
+            raise self._exception(
+                f"Cannot pop required {self._node_edge} attribute '{k}' for "
+                f"{self._el}")
 
 
 def node_attr_dict_factory(node_params):

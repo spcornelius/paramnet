@@ -73,10 +73,10 @@ def test_add_edge(graph_cls):
     G.remove_edge(0, 1)
 
     with pytest.raises(EdgeParameterError):
-        G.add_edges_from([(0,1), (1, 2)])
+        G.add_edges_from([(0, 1), (1, 2)])
 
     with pytest.raises(EdgeParameterError):
-        G.add_edges_from([(0,1), (1, 2)], x=2)
+        G.add_edges_from([(0, 1), (1, 2)], x=2)
 
     with pytest.raises(EdgeParameterError):
         G.add_edges_from([(0, 1), (1, 2)], y=3)

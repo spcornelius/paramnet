@@ -1,5 +1,5 @@
-import numpy as np
 import networkx as nx
+import numpy as np
 
 __all__ = []
 
@@ -13,7 +13,9 @@ def node_param_vector(G, param_name, nodes=None):
     if nodes is None:
         nodes = G.nodes()
 
-    get_param = lambda node: G.nodes[node][param_name]
+    def get_param(node):
+        return G.nodes[node][param_name]
+
     return np.array([get_param(node) for node in nodes])
 
 
