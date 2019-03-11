@@ -1,10 +1,31 @@
-os:
-  - linux
-language: python
-dist: xenial
-python:
-  - "3.6"
-  - "3.7"
+matrix:
+  include:
+    - os: osx
+      langauge: generic
+      env: PYTHON=3.6
+    - os: osx
+      langauge: generic
+      env: PYTHON=3.7
+    - os: linux
+      dist: xenial
+      language: python
+      python:
+        - "3.6"
+        - "3.7"
+
+before_install: |
+  if [ "$TRAVIS_OS_NAME" == "osx" ]; then
+    brew update
+    brew install openssl readline
+    brew outdated pyenv || brew upgrade pyenv
+    brew install pyenv-virtualenv
+    pyenv install $PYTHON
+    export PYENV_VERSION=$PYTHON
+    pyenv-virtualenv venv
+    source venv/bin/activate
+    # A manual check that the correct version of Python is running.
+    python --version
+  fi
 install:
   - python -m pip install .[all]
 script:
