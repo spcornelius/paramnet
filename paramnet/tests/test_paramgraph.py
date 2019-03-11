@@ -3,7 +3,8 @@ import numpy as np
 import pytest
 
 from paramnet import Parametrized
-from paramnet.exceptions import NodeParameterError, EdgeParameterError
+from paramnet.exceptions import NodeParameterError, EdgeParameterError, \
+    FieldConflictError
 
 all_graph_types = [nx.Graph, nx.DiGraph]
 
@@ -113,6 +114,50 @@ def test_node_order_and_index(graph_cls):
 
     with pytest.raises(nx.NetworkXError):
         G.index('non-existent-node')
+
+
+@pytest.mark.parametrize("graph_cls", all_graph_types)
+def test_fields(graph_cls):
+    with pytest.raises(FieldConflictError):
+        class A(Parametrized, graph_cls):
+            _node_params = ['add_node']
+
+    with pytest.raises(FieldConflictError):
+        class A(Parametrized, graph_cls):
+            _edge_params = ['__dict__']
+
+    with pytest.raises(FieldConflictError):
+        class A(Parametrized, graph_cls):
+            _edge_params = ['x']
+            _node_params = ['x']
+
+    class A(Parametrized, graph_cls):
+        _node_params = ['r']
+        _edge_params = ['w']
+
+    G = A()
+
+    assert hasattr(G, 'r')
+    assert hasattr(G, 'w')
+
+    G.add_node(0, r=300.0)
+    G.add_node(1, r=49.0)
+    G.add_node(2, r=15.0)
+
+    assert np.allclose(G.r, np.array([300.0, 49.0, 15.0]))
+
+    G.add_edge(0, 1, w=1)
+    G.add_edge(2, 0, w=-10)
+    G.add_edge(1, 1, w=2.0)
+    w = G.w
+    if G.is_directed():
+        assert np.allclose(w, np.array([[0, 1, 0],
+                                        [0, 2.0, 0],
+                                        [-10, 0, 0]]))
+    else:
+        assert np.allclose(w, np.array([[0, 1, -10],
+                                        [1, 2.0, 0],
+                                        [-10, 0, 0]]))
 
 
 @pytest.mark.parametrize("graph_cls", all_graph_types)

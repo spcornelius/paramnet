@@ -5,7 +5,9 @@ __all__ = []
 
 __all__.extend([
     'node_param_vector',
-    'edge_param_matrix'
+    'edge_param_matrix',
+    'node_param_getter',
+    'edge_param_getter'
 ])
 
 
@@ -25,3 +27,17 @@ def edge_param_matrix(G, param_name, nodes=None, transpose=False):
 
     P = nx.attr_matrix(G, edge_attr=param_name, rc_order=nodes).A
     return P.T if transpose else P
+
+
+def node_param_getter(name):
+    def get(self):
+        return node_param_vector(self, name)
+
+    return get
+
+
+def edge_param_getter(name):
+    def get(self):
+        return edge_param_matrix(self, name)
+
+    return get

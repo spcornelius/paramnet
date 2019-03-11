@@ -2,8 +2,9 @@ import networkx as nx
 from indexed import IndexedOrderedDict
 
 from paramnet.dict import node_attr_dict_factory, edge_attr_dict_factory
-from paramnet.exceptions import ParametrizedNetworkError
-from paramnet.util import node_param_vector, edge_param_matrix
+from paramnet.exceptions import ParametrizedNetworkError, FieldConflictError
+from paramnet.util import node_param_vector, edge_param_matrix, \
+    edge_param_getter, node_param_getter
 
 __all__ = []
 __all__.extend([
@@ -66,6 +67,23 @@ class ParametrizedMeta(type):
             if hasattr(cls, method):
                 # wrap all add_ methods with attribute checks
                 setattr(cls, method, verify_add(getattr(cls, method)))
+
+        # create properties for node/edge params
+        for field in cls._node_params:
+            if hasattr(cls, field):
+                raise FieldConflictError(
+                    f"Trying to overwrite existing field {field} for class "
+                    f"{name}.")
+            setattr(cls, field, property(node_param_getter(field)))
+        for field in cls._edge_params:
+            if field == 'weight':
+                continue
+            if hasattr(cls, field):
+                raise FieldConflictError(
+                    f"Trying to overwrite existing field {field} for class "
+                    f"{name}.")
+            setattr(cls, field, property(edge_param_getter(field)))
+
         return cls
 
     def __call__(mcs, *args, **kwargs):

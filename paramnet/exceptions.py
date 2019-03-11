@@ -2,8 +2,10 @@ __all__ = []
 
 __all__.extend([
     'ParametrizedNetworkError',
+    'ParameterError',
     'NodeParameterError',
-    'EdgeParameterError'
+    'EdgeParameterError',
+    'FieldConflictError'
 ])
 
 
@@ -11,9 +13,17 @@ class ParametrizedNetworkError(Exception):
     pass
 
 
-class NodeParameterError(ParametrizedNetworkError):
+class FieldConflictError(ParametrizedNetworkError):
     pass
 
 
-class EdgeParameterError(ParametrizedNetworkError):
+class ParameterError(ParametrizedNetworkError):
+    pass
+
+
+class NodeParameterError(ParameterError):
+    pass
+
+
+class EdgeParameterError(ParameterError):
     pass
