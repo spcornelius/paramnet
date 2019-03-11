@@ -24,7 +24,7 @@ before_install:
       conda config --set always_yes yes --set changeps1 no;
       conda update -q conda;
       conda create -n myenv python=$PYTHON anaconda;
-      conda activate myenv;
+      source activate myenv;
     fi
 install:
   - python -m pip install .[all]
