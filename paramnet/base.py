@@ -55,6 +55,8 @@ class ParametrizedMeta(type):
     """ Metaclass for Parametrized graphs. """
 
     def __init__(cls, name, bases, attrs):
+        super().__init__(name, bases, attrs)
+        
         # maintain order of nodes and allow indexing
         cls.node_dict_factory = OrderedDict
 
