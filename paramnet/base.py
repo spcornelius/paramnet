@@ -8,7 +8,8 @@ from paramnet.util import node_param_vector, edge_param_matrix, \
 
 __all__ = []
 __all__.extend([
-    'Parametrized'
+    'Parametrized',
+    'ParametrizedMeta'
 ])
 
 _add_methods = ['add_node', 'add_nodes_from', 'add_edge', 'add_edges_from',
