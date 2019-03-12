@@ -1,5 +1,5 @@
 import networkx as nx
-from indexed import IndexedOrderedDict
+from collections import OrderedDict
 
 from paramnet.dict import node_attr_dict_factory, edge_attr_dict_factory
 from paramnet.exceptions import ParametrizedNetworkError, FieldConflictError
@@ -58,7 +58,7 @@ class ParametrizedMeta(type):
         cls = type.__new__(mcs, name, bases, attrs)
 
         # maintain order of nodes and allow indexing
-        cls.node_dict_factory = IndexedOrderedDict
+        cls.node_dict_factory = OrderedDict
 
         # enforce presence of attributes after creation
         cls._nadf = node_attr_dict_factory(getattr(cls, "_node_params", []))
@@ -101,7 +101,7 @@ class Parametrized(object, metaclass=ParametrizedMeta):
 
     def index(self, node):
         try:
-            return self._node.keys().index(node)
+            return list(self._node.keys()).index(node)
         except ValueError:
             raise nx.NetworkXError(f"The node {node} is not in the graph.")
 
