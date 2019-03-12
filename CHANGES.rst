@@ -1,3 +1,7 @@
+v0.3.2
+======
+- ParametrizedMeta inheritance tweak
+
 v0.3.1
 ======
 - ParametrizedMeta shift from __new__ to __init__
