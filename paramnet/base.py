@@ -54,9 +54,7 @@ def verify_add(method):
 class ParametrizedMeta(type):
     """ Metaclass for Parametrized graphs. """
 
-    def __new__(mcs, name, bases, attrs):
-        cls = type.__new__(mcs, name, bases, attrs)
-
+    def __init__(cls, name, bases, attrs):
         # maintain order of nodes and allow indexing
         cls.node_dict_factory = OrderedDict
 
@@ -85,9 +83,7 @@ class ParametrizedMeta(type):
                     f"{name}.")
             setattr(cls, field, property(edge_param_getter(field)))
 
-        return cls
-
-    def __call__(mcs, *args, **kwargs):
+    def __call__(cls, *args, **kwargs):
         obj = super().__call__(*args, **kwargs)
         if not isinstance(obj, nx.Graph):
             raise TypeError(
