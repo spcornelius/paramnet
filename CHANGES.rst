@@ -1,3 +1,8 @@
+v0.4.0
+======
+- Overhaul enforcement of require attrs through custom dicts/descriptors
+- Make said dicts/descriptors exported and available to inherit
+
 v0.3.2
 ======
 - ParametrizedMeta inheritance tweak
