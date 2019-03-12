@@ -1,8 +1,10 @@
-import networkx as nx
 from collections import OrderedDict
 
-from paramnet.dict import node_attr_dict_factory, edge_attr_dict_factory
-from paramnet.exceptions import ParametrizedNetworkError, FieldConflictError
+import networkx as nx
+
+from paramnet.dict import NodeDict, AdjlistOuterDict
+from paramnet.exceptions import ParametrizedNetworkError, FieldConflictError, \
+    NodeParameterError, EdgeParameterError
 from paramnet.util import node_param_vector, edge_param_matrix, \
     edge_param_getter, node_param_getter
 
@@ -36,12 +38,18 @@ def verify_add(method):
         new_edges = self.edges() - old_edges
         try:
             for new_node in new_nodes:
-                if not isinstance(self._node[new_node], self._nadf):
-                    self._node[new_node] = self._nadf(self._node[new_node])
+                if not self._node[new_node].has_all_attrs():
+                    raise NodeParameterError(
+                        f"Tried to add node {new_node} without all required "
+                        f"parameters: {self._node_params}"
+                    )
             for new_edge in new_edges:
                 u, v = new_edge
-                if not isinstance(self._adj[u][v], self._eadf):
-                    self._adj[u][v] = self._eadf(self._adj[u][v])
+                if not self._adj[u][v].has_all_attrs():
+                    raise EdgeParameterError(
+                        f"Tried to add edge {(u, v)} "
+                        f"without all required parameters: {self._edge_params}"
+                    )
         except ParametrizedNetworkError as err:
             # rollback
             self.remove_nodes_from(new_nodes)
@@ -56,13 +64,10 @@ class ParametrizedMeta(type):
 
     def __init__(cls, name, bases, attrs):
         super().__init__(name, bases, attrs)
-        
-        # maintain order of nodes and allow indexing
-        cls.node_dict_factory = OrderedDict
 
-        # enforce presence of attributes after creation
-        cls._nadf = node_attr_dict_factory(getattr(cls, "_node_params", []))
-        cls._eadf = edge_attr_dict_factory(getattr(cls, "_edge_params", []))
+        # if mixin used with non-DiGraph, null this to avoid
+        # probs with various NetworkX functions
+        cls._pred = None
 
         for method in _add_methods:
             if hasattr(cls, method):
@@ -96,6 +101,12 @@ class ParametrizedMeta(type):
 class Parametrized(object, metaclass=ParametrizedMeta):
     _node_params = []
     _edge_params = []
+
+    node_dict_factory = OrderedDict
+
+    _node = NodeDict()
+    _adj = AdjlistOuterDict()
+    _pred = AdjlistOuterDict()
 
     def index(self, node):
         try:
