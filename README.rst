@@ -24,7 +24,7 @@ in the class definition:
 
     >>> class MyGraph(Parametrized, Graph):
     ...    _node_params = ['x']
-    ...    _edge_params = ['weight']
+    ...    _edge_params = ['y']
 
     G = MyGraph()
 ..
