@@ -1,3 +1,10 @@
+v1.0.0
+======
+- View interface to node/edge params
+- Named param fields support O(1) random access for specific values (keyed by node/edge)
+- Named param fields also support array (numpy) operations (non-indexed access)
+- Improved documentation
+
 v0.4.0
 ======
 - Overhaul enforcement of require attrs through custom dicts/descriptors
