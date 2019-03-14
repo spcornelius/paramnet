@@ -6,7 +6,7 @@ from itertools import chain
 
 pkg_name = 'paramnet'
 license = 'MIT'
-version = '1.0.1'
+version = '1.0.2'
 
 tests = ['paramnet.tests']
 tests_require = ['pytest>=2.9.2']
