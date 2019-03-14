@@ -12,7 +12,7 @@ extras_req = {
     'testing': ['pytest', 'pytest-pep8', 'scipy']
 }
 
-extras_req['all'] = list(chain(extras_req.values()))
+extras_req['all'] = list(chain(*extras_req.values()))
 
 classifiers = [
     "Development Status :: 3 - Alpha",
