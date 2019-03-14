@@ -45,8 +45,8 @@ if __name__ == '__main__':
         url="https://github.com/spcornelius/paramnet",
         license=license,
         packages=setuptools.find_packages(),
-        install_requires=['networkx>=2.0', 'scipy'],
-        tests_require=['pytest>=2.9.2', 'numpy'],
+        install_requires=['networkx>=2.0', 'numpy'],
+        tests_require=['pytest>=2.9.2'],
         extras_require=extras_req,
         python_requires='>=3.6',
         classifiers=classifiers)
