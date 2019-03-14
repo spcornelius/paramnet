@@ -1,3 +1,8 @@
+v1.0.2
+======
+- Fix example code error in README
+- Add scipy to testing requirements
+
 v1.0.1
 ======
 - Minor code cleanup
