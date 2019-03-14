@@ -46,7 +46,7 @@ if __name__ == '__main__':
         license=license,
         packages=setuptools.find_packages(),
         install_requires=['networkx>=2.0', 'numpy'],
-        tests_require=['pytest>=2.9.2'],
+        tests_require=['pytest>=2.9.2', 'scipy'],
         extras_require=extras_req,
         python_requires='>=3.6',
         classifiers=classifiers)
