@@ -1,10 +1,12 @@
-import numpy as np
 import abc
+
+import numpy as np
 
 __all__ = ['NodeParamView', 'EdgeParamView']
 
 # delegate almost all magic methods to the full array
-# (omit in-place operations a few others like __len__ that we will special case)
+# (omit in-place ops + a few others like __len__ that we will special
+# case)
 _delegated_mms = ['abs', 'add', 'and', 'array', 'bool', 'complex',
                   'contains', 'copy', 'deepcopy', 'divmod', 'eq',
                   'float', 'floordiv', 'format', 'ge', 'gt',

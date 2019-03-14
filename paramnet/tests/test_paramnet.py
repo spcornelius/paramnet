@@ -227,5 +227,3 @@ def test_adj(graph_cls):
     else:
         d = [G.degree(x) for x in G]
         assert np.allclose(d, G.A @ one)
-
-
