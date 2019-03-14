@@ -8,3 +8,5 @@ import paramnet.util
 from paramnet.util import *
 
 from paramnet.dict import *
+
+from paramnet.view import *
