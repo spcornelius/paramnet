@@ -5,8 +5,7 @@ import networkx as nx
 from paramnet.dict import NodeDict, AdjlistOuterDict
 from paramnet.exceptions import ParametrizedNetworkError, FieldConflictError, \
     NodeParameterError, EdgeParameterError
-from paramnet.util import node_param_vector, edge_param_matrix, \
-    edge_param_getter, node_param_getter
+from paramnet.util import node_param_property, edge_param_property
 
 __all__ = []
 __all__.extend([
@@ -75,12 +74,15 @@ class ParametrizedMeta(type):
                 setattr(cls, method, verify_add(getattr(cls, method)))
 
         # create properties for node/edge params
+
+        # adjacency matrix
+        setattr(cls, "A", edge_param_property("weight", default=1.0))
         for field in cls._node_params:
             if hasattr(cls, field):
                 raise FieldConflictError(
                     f"Trying to overwrite existing field {field} for class "
                     f"{name}.")
-            setattr(cls, field, property(node_param_getter(field)))
+            setattr(cls, field, node_param_property(field))
         for field in cls._edge_params:
             if field == 'weight':
                 continue
@@ -88,7 +90,7 @@ class ParametrizedMeta(type):
                 raise FieldConflictError(
                     f"Trying to overwrite existing field {field} for class "
                     f"{name}.")
-            setattr(cls, field, property(edge_param_getter(field)))
+            setattr(cls, field, edge_param_property(field))
 
     def __call__(cls, *args, **kwargs):
         obj = super().__call__(*args, **kwargs)
@@ -115,19 +117,9 @@ class Parametrized(object, metaclass=ParametrizedMeta):
             raise nx.NetworkXError(f"The node {node} is not in the graph.")
 
     @property
-    def A(self):
-        return nx.adjacency_matrix(self).todense()
-
-    @property
     def node_params(self):
         return self._node_params
 
     @property
     def edge_params(self):
         return self._edge_params
-
-    def node_param_vector(self, name):
-        return node_param_vector(self, name)
-
-    def edge_param_matrix(self, name, transpose=False):
-        return edge_param_matrix(self, name, transpose=transpose)

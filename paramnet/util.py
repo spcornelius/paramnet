@@ -1,43 +1,22 @@
-import networkx as nx
-import numpy as np
+from paramnet.view import NodeParamView, EdgeParamView
 
 __all__ = []
 
 __all__.extend([
-    'node_param_vector',
-    'edge_param_matrix',
-    'node_param_getter',
-    'edge_param_getter'
+    'node_param_property',
+    'edge_param_property'
 ])
 
 
-def node_param_vector(G, param_name, nodes=None):
-    if nodes is None:
-        nodes = G.nodes()
-
-    def get_param(node):
-        return G.nodes[node][param_name]
-
-    return np.array([get_param(node) for node in nodes])
-
-
-def edge_param_matrix(G, param_name, nodes=None, transpose=False):
-    if nodes is None:
-        nodes = G.nodes()
-
-    P = nx.attr_matrix(G, edge_attr=param_name, rc_order=nodes).A
-    return P.T if transpose else P
-
-
-def node_param_getter(name):
+def node_param_property(param_name, default=None):
     def get(self):
-        return node_param_vector(self, name)
+        return NodeParamView(self, param_name, default=default)
 
-    return get
+    return property(get)
 
 
-def edge_param_getter(name):
+def edge_param_property(param_name, default=None):
     def get(self):
-        return edge_param_matrix(self, name)
+        return EdgeParamView(self, param_name, default=default)
 
-    return get
+    return property(get)
