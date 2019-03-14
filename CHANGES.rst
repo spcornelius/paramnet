@@ -1,3 +1,7 @@
+v1.0.1
+======
+- Minor code cleanup
+
 v1.0.0
 ======
 - View interface to node/edge params
