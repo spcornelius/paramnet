@@ -8,11 +8,8 @@ pkg_name = 'paramnet'
 license = 'MIT'
 version = '1.0.2'
 
-tests = ['paramnet.tests']
-tests_require = ['pytest>=2.9.2']
-
 extras_req = {
-    'testing': ['pytest', 'pytest-pep8']
+    'testing': ['pytest', 'pytest-pep8', 'scipy']
 }
 
 extras_req['all'] = list(chain(extras_req.values()))
@@ -46,7 +43,6 @@ if __name__ == '__main__':
         license=license,
         packages=setuptools.find_packages(),
         install_requires=['networkx>=2.0', 'numpy'],
-        tests_require=['pytest>=2.9.2', 'scipy'],
         extras_require=extras_req,
         python_requires='>=3.6',
         classifiers=classifiers)
