@@ -1,3 +1,8 @@
+v1.1.0
+======
+- Simplify interface by removing MetaClass
+- Allow defining node/edge params in class arguments
+
 v1.0.2
 ======
 - Fix example code error in README

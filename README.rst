@@ -22,9 +22,8 @@ in the class definition:
 
 .. code:: python
 
-    >>> class MyGraph(Parametrized, Graph):
-    ...    _node_params = ['x']
-    ...    _edge_params = ['y']
+    >>> class MyGraph(Parametrized, Graph, node_params=['x'], edge_params=['y']):
+    ...    pass
 
     G = MyGraph()
 ..
