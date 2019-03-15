@@ -12,13 +12,13 @@ all_graph_types = [nx.Graph, nx.DiGraph]
 def test_mixin_standalone():
     with pytest.raises(TypeError):
         class A(Parametrized):
-                pass
+            pass
 
 
 @pytest.mark.parametrize("graph_cls", all_graph_types)
 def test_add_node(graph_cls):
-    class A(Parametrized, graph_cls):
-        _node_params = ['a', 'b']
+    class A(Parametrized, graph_cls, node_params=['a', 'b']):
+        pass
 
     G = A()
     with pytest.raises(NodeParameterError):
@@ -46,9 +46,9 @@ def test_add_node(graph_cls):
 
 @pytest.mark.parametrize("graph_cls", all_graph_types)
 def test_add_edge(graph_cls):
-    class A(Parametrized, graph_cls):
-        _node_params = ['a']
-        _edge_params = ['x', 'y']
+    class A(Parametrized, graph_cls,
+            node_params=['a'], edge_params=['x', 'y']):
+        pass
 
     G = A()
     with pytest.raises(NodeParameterError):
@@ -117,21 +117,25 @@ def test_node_order_and_index(graph_cls):
 @pytest.mark.parametrize("graph_cls", all_graph_types)
 def test_fields(graph_cls):
     with pytest.raises(FieldConflictError):
-        class A(Parametrized, graph_cls):
-            _node_params = ['add_node']
+        class A(Parametrized, graph_cls,
+                node_params=['add_node']):
+            pass
 
     with pytest.raises(FieldConflictError):
-        class A(Parametrized, graph_cls):
-            _edge_params = ['__dict__']
+        class A(Parametrized, graph_cls,
+                edge_params=['__dict__']):
+            pass
 
     with pytest.raises(FieldConflictError):
-        class A(Parametrized, graph_cls):
-            _edge_params = ['x']
-            _node_params = ['x']
+        class A(Parametrized, graph_cls,
+                node_params=['x'],
+                edge_params=['x']):
+            pass
 
-    class A(Parametrized, graph_cls):
-        _node_params = ['r']
-        _edge_params = ['w']
+    class A(Parametrized, graph_cls,
+            node_params=['r'],
+            edge_params=['w']):
+        pass
 
     G = A()
 
