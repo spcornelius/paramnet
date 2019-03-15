@@ -80,8 +80,9 @@ class Parametrized(object):
         if not issubclass(cls, nx.DiGraph):
             cls._pred = None
 
-        cls._wrap_adders()
-        cls._add_param_fields()
+        if issubclass(cls, nx.Graph):
+            cls._wrap_adders()
+            cls._add_param_fields()
 
     @classmethod
     def _wrap_adders(cls):
