@@ -1,3 +1,7 @@
+v1.1.1
+======
+- Allow subclassing of Parametrized without Graph
+
 v1.1.0
 ======
 - Simplify interface by removing MetaClass
