@@ -69,9 +69,6 @@ class Parametrized(object):
 
     def __init_subclass__(cls, node_params=None, edge_params=None, **kwargs):
         super().__init_subclass__(**kwargs)
-        if not issubclass(cls, nx.Graph):
-            raise TypeError(
-                "Parametrize mixin must be used with a subclass of nx.Graph.")
 
         if node_params is None:
             node_params = []
