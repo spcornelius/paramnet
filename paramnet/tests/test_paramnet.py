@@ -9,12 +9,6 @@ from paramnet.exceptions import NodeParameterError, EdgeParameterError, \
 all_graph_types = [nx.Graph, nx.DiGraph]
 
 
-def test_mixin_standalone():
-    with pytest.raises(TypeError):
-        class A(Parametrized):
-            pass
-
-
 @pytest.mark.parametrize("graph_cls", all_graph_types)
 def test_add_node(graph_cls):
     class A(Parametrized, graph_cls, node_params=['a', 'b']):
