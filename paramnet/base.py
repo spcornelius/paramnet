@@ -9,8 +9,7 @@ from paramnet.util import node_param_property, edge_param_property
 
 __all__ = []
 __all__.extend([
-    'Parametrized',
-    'ParametrizedMeta'
+    'Parametrized'
 ])
 
 _add_methods = ['add_node', 'add_nodes_from', 'add_edge', 'add_edges_from',
@@ -58,49 +57,7 @@ def verify_add(method):
     return wrapped
 
 
-class ParametrizedMeta(type):
-    """ Metaclass for Parametrized graphs. """
-
-    def __init__(cls, name, bases, attrs):
-        super().__init__(name, bases, attrs)
-
-        # if mixin used with non-DiGraph, null this to avoid
-        # probs with various NetworkX functions
-        cls._pred = None
-
-        for method in _add_methods:
-            if hasattr(cls, method):
-                # wrap all add_ methods with attribute checks
-                setattr(cls, method, verify_add(getattr(cls, method)))
-
-        # create properties for node/edge params
-
-        # adjacency matrix
-        setattr(cls, "A", edge_param_property("weight", default=1.0))
-        for field in cls._node_params:
-            if hasattr(cls, field):
-                raise FieldConflictError(
-                    f"Trying to overwrite existing field {field} for class "
-                    f"{name}.")
-            setattr(cls, field, node_param_property(field))
-        for field in cls._edge_params:
-            if field == 'weight':
-                continue
-            if hasattr(cls, field):
-                raise FieldConflictError(
-                    f"Trying to overwrite existing field {field} for class "
-                    f"{name}.")
-            setattr(cls, field, edge_param_property(field))
-
-    def __call__(cls, *args, **kwargs):
-        obj = super().__call__(*args, **kwargs)
-        if not isinstance(obj, nx.Graph):
-            raise TypeError(
-                "Parametrize mixin must be used with a subclass of nx.Graph.")
-        return obj
-
-
-class Parametrized(object, metaclass=ParametrizedMeta):
+class Parametrized(object):
     _node_params = []
     _edge_params = []
 
@@ -109,6 +66,46 @@ class Parametrized(object, metaclass=ParametrizedMeta):
     _node = NodeDict()
     _adj = AdjlistOuterDict()
     _pred = AdjlistOuterDict()
+
+    def __init_subclass__(cls, node_params=None, edge_params=None, **kwargs):
+        super().__init_subclass__(**kwargs)
+        if not issubclass(cls, nx.Graph):
+            raise TypeError(
+                "Parametrize mixin must be used with a subclass of nx.Graph.")
+
+        if node_params is not None:
+            cls._node_params.extend(node_params)
+        if edge_params is not None:
+            cls._edge_params.extend(edge_params)
+        if not issubclass(cls, nx.DiGraph):
+            cls._pred = None
+            
+        cls._wrap_adders()
+        cls._add_param_fields()
+
+    @classmethod
+    def _wrap_adders(cls):
+        for method in _add_methods:
+            setattr(cls, method, verify_add(getattr(cls, method)))
+
+    @classmethod
+    def _add_param_fields(cls):
+        # adjacency matrix
+        setattr(cls, "A", edge_param_property("weight", default=1.0))
+        for field in cls._node_params:
+            if hasattr(cls, field):
+                raise FieldConflictError(
+                    f"Trying to overwrite existing field {field} for class "
+                    f"{cls.__name__}.")
+            setattr(cls, field, node_param_property(field))
+        for field in cls._edge_params:
+            if field == 'weight':
+                continue
+            if hasattr(cls, field):
+                raise FieldConflictError(
+                    f"Trying to overwrite existing field {field} for class "
+                    f"{cls.__name__}.")
+            setattr(cls, field, edge_param_property(field))
 
     def index(self, node):
         try:

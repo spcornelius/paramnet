@@ -10,11 +10,9 @@ all_graph_types = [nx.Graph, nx.DiGraph]
 
 
 def test_mixin_standalone():
-    class A(Parametrized):
-        pass
-
     with pytest.raises(TypeError):
-        A()
+        class A(Parametrized):
+                pass
 
 
 @pytest.mark.parametrize("graph_cls", all_graph_types)
