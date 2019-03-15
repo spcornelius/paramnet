@@ -73,13 +73,16 @@ class Parametrized(object):
             raise TypeError(
                 "Parametrize mixin must be used with a subclass of nx.Graph.")
 
-        if node_params is not None:
-            cls._node_params.extend(node_params)
-        if edge_params is not None:
-            cls._edge_params.extend(edge_params)
+        if node_params is None:
+            node_params = []
+        if edge_params is None:
+            edge_params = []
+        cls._node_params = list(node_params)
+        cls._edge_params = list(edge_params)
+
         if not issubclass(cls, nx.DiGraph):
             cls._pred = None
-            
+
         cls._wrap_adders()
         cls._add_param_fields()
 
