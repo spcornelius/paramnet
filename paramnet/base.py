@@ -67,8 +67,12 @@ class Parametrized(object):
     _adj = AdjlistOuterDict()
     _pred = AdjlistOuterDict()
 
-    def __init_subclass__(cls, node_params=None, edge_params=None, **kwargs):
+    def __init_subclass__(cls, node_params=None, edge_params=None,
+                          is_abstract=False, **kwargs):
         super().__init_subclass__(**kwargs)
+
+        if is_abstract:
+            return
 
         if node_params is None:
             node_params = []
@@ -77,19 +81,19 @@ class Parametrized(object):
         cls._node_params = list(node_params)
         cls._edge_params = list(edge_params)
 
+        if issubclass(cls, nx.Graph):
+            Parametrized._wrap_adders(cls)
+            Parametrized._add_param_fields(cls)
+
         if not issubclass(cls, nx.DiGraph):
             cls._pred = None
 
-        if issubclass(cls, nx.Graph):
-            cls._wrap_adders()
-            cls._add_param_fields()
-
-    @classmethod
+    @staticmethod
     def _wrap_adders(cls):
         for method in _add_methods:
             setattr(cls, method, verify_add(getattr(cls, method)))
 
-    @classmethod
+    @staticmethod
     def _add_param_fields(cls):
         # adjacency matrix
         setattr(cls, "A", edge_param_property("weight", default=1.0))
