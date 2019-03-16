@@ -1,3 +1,7 @@
+v1.2.0
+======
+- Minor interface change for subclassing Parametrized
+
 v1.1.1
 ======
 - Allow subclassing of Parametrized without Graph
