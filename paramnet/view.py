@@ -38,7 +38,7 @@ class ParamViewMeta(abc.ABCMeta):
 
 class ParamView(object, metaclass=ParamViewMeta):
 
-    def __init__(self, name, net, default=None):
+    def __init__(self, name, net, default=np.nan):
         self._name = name
         self._net = net
         self._default = default
@@ -114,7 +114,7 @@ class NodeParamView(ParamView):
 
     @property
     def array(self):
-        return np.array([self[node] for node in self._net])
+        return np.array([self[node] for node in self._net], dtype=np.float64)
 
 
 class EdgeParamView(ParamView):
