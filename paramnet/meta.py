@@ -31,9 +31,6 @@ class ParametrizedMeta(type):
 
         cls.node_dict_factory = OrderedDict
 
-        if not issubclass(cls, nx.DiGraph) and hasattr(cls, '_pred'):
-            del cls._pred
-
     def __call__(cls, *args, **kwargs):
         if not issubclass(cls, nx.Graph):
             raise TypeError("Can't parametrize a non-graph class.")
