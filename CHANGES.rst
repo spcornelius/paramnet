@@ -1,3 +1,9 @@
+v2.0.0
+======
+- Simplified interface
+- Missing params return NaN instead of raising errors
+- Improved documentation
+
 v1.3.0
 ======
 - Reinstate use of ParametrizedMeta metaclass
