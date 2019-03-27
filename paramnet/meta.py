@@ -2,58 +2,13 @@ from collections import OrderedDict
 
 import networkx as nx
 
-from paramnet.exceptions import ParametrizedNetworkError, FieldConflictError, \
-    NodeParameterError, EdgeParameterError
+from paramnet.exceptions import FieldConflictError
 from paramnet.view import NodeParamView, EdgeParamView
 
 __all__ = []
 __all__.extend([
     'ParametrizedMeta'
 ])
-
-_add_methods = ['add_node', 'add_nodes_from', 'add_edge', 'add_edges_from',
-                'add_weighted_edges_from']
-
-
-def verify_add(method):
-    """ wrapper to check all node/edge additions have required parameters and
-    rollback if not
-
-    Checking is done by casting the attr dicts for any new nodes/edges as
-    the appropriate AttrDict subclass in this module, which enforces required
-    keys. Cleanest general solution, since (i) nx.add_node/edge* methods accept
-    different input types and (ii) they don't consistently use
-    node(edge)_attr_dict_factory to create new attr dicts. """
-
-    def wrapped(self, *args, **kwargs):
-        old_nodes = set(self.nodes())
-        old_edges = set(self.edges())
-
-        method(self, *args, **kwargs)
-
-        new_nodes = self.nodes() - old_nodes
-        new_edges = self.edges() - old_edges
-        try:
-            for new_node in new_nodes:
-                if not self._node[new_node].has_all_attrs():
-                    raise NodeParameterError(
-                        f"Tried to add node {new_node} without all required "
-                        f"parameters: {self._node_params}"
-                    )
-            for new_edge in new_edges:
-                u, v = new_edge
-                if not self._adj[u][v].has_all_attrs():
-                    raise EdgeParameterError(
-                        f"Tried to add edge {(u, v)} "
-                        f"without all required parameters: {self._edge_params}"
-                    )
-        except ParametrizedNetworkError as err:
-            # rollback
-            self.remove_nodes_from(new_nodes)
-            self.remove_edges_from(new_edges)
-            raise err
-
-    return wrapped
 
 
 class ParametrizedMeta(type):
@@ -78,11 +33,6 @@ class ParametrizedMeta(type):
 
         if not issubclass(cls, nx.DiGraph) and hasattr(cls, '_pred'):
             del cls._pred
-
-        # wrap node/edge addition methods to enforce parameters
-        if issubclass(cls, nx.Graph):
-            for method in _add_methods:
-                setattr(cls, method, verify_add(getattr(cls, method)))
 
     def __call__(cls, *args, **kwargs):
         if not issubclass(cls, nx.Graph):
