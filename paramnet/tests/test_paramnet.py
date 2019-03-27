@@ -3,89 +3,17 @@ import numpy as np
 import pytest
 
 from paramnet import Parametrized
-from paramnet.exceptions import NodeParameterError, EdgeParameterError, \
-    FieldConflictError
+from paramnet.exceptions import FieldConflictError
 
 all_graph_types = [nx.Graph, nx.DiGraph]
 
 
-@pytest.mark.parametrize("graph_cls", all_graph_types)
-def test_add_node(graph_cls):
-    class A(Parametrized, graph_cls, node_params=['a', 'b']):
+def test_abc():
+    class A(Parametrized):
         pass
 
-    G = A()
-    with pytest.raises(NodeParameterError):
-        G.add_node(0)
-
-    with pytest.raises(NodeParameterError):
-        G.add_node(0, a=1)
-
-    with pytest.raises(NodeParameterError):
-        G.add_node(0, b=2)
-
-    G.add_node(0, a=1, b=2)
-
-    with pytest.raises(NodeParameterError):
-        G.add_nodes_from(range(1, 5))
-
-    with pytest.raises(NodeParameterError):
-        G.add_nodes_from(range(1, 5), a=10)
-
-    with pytest.raises(NodeParameterError):
-        G.add_nodes_from(range(1, 5), b=20)
-
-    G.add_nodes_from(range(1, 5), a=10, b=20)
-
-
-@pytest.mark.parametrize("graph_cls", all_graph_types)
-def test_add_edge(graph_cls):
-    class A(Parametrized, graph_cls,
-            node_params=['a'], edge_params=['x', 'y']):
-        pass
-
-    G = A()
-    with pytest.raises(NodeParameterError):
-        G.add_edge(0, 1, x=2, y=3)
-
-    assert G.size() == 0
-    assert len(G) == 0
-
-    G.add_nodes_from(range(5), a=1)
-
-    with pytest.raises(EdgeParameterError):
-        G.add_edge(0, 1)
-
-    with pytest.raises(EdgeParameterError):
-        G.add_edge(0, 1, x=2)
-
-    with pytest.raises(EdgeParameterError):
-        G.add_edge(0, 1, y=3)
-
-    G.add_edge(0, 1, x=2, y=3)
-    G.remove_edge(0, 1)
-
-    with pytest.raises(EdgeParameterError):
-        G.add_edges_from([(0, 1), (1, 2)])
-
-    with pytest.raises(EdgeParameterError):
-        G.add_edges_from([(0, 1), (1, 2)], x=2)
-
-    with pytest.raises(EdgeParameterError):
-        G.add_edges_from([(0, 1), (1, 2)], y=3)
-
-    G.add_edges_from([(0, 1), (1, 2)], x=2, y=3)
-
-    with pytest.raises(EdgeParameterError):
-        G.add_cycle(range(5))
-
-    with pytest.raises(EdgeParameterError):
-        G.add_cycle(range(5), x=2)
-
-    with pytest.raises(EdgeParameterError):
-        G.add_cycle(range(5), y=3)
-
-    G.add_cycle(range(5), x=2, y=3)
+    with pytest.raises(TypeError):
+        A()
 
 
 @pytest.mark.parametrize("graph_cls", all_graph_types)
@@ -231,7 +159,7 @@ def test_vector_assignment(graph_cls):
         assert G.w[0, 1] == 5.0
         assert G.w[2, 0] == -0.1
     else:
-        with pytest.raises(EdgeParameterError):
+        with pytest.raises(ValueError):
             G.w = np.array([[0.0, 5.0, -0.1],
                             [5.0, 0.0, 0.0],
                             [-0.1, 3.0, 0.0]])
