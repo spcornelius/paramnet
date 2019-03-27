@@ -82,7 +82,7 @@ class NodeParamView(ParamView):
 
         try:
             return _get(item)
-        except KeyError:
+        except (KeyError, TypeError):
             nodes = list(item)
             return np.array([_get(node) for node in nodes])
 
@@ -127,7 +127,7 @@ class EdgeParamView(ParamView):
 
         try:
             return _get(item)
-        except KeyError:
+        except (KeyError, TypeError):
             edges = list(item)
             return np.array([_get(edge) for edge in edges])
 
