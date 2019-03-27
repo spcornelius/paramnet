@@ -1,3 +1,8 @@
+v1.3.0
+======
+- Reinstate use of ParametrizedMeta metaclass
+- Support for fancy indexing and array-wise assignment of param values
+
 v1.2.0
 ======
 - Minor interface change for subclassing Parametrized
