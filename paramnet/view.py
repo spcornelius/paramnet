@@ -2,8 +2,6 @@ import abc
 
 import numpy as np
 
-from paramnet.exceptions import EdgeParameterError
-
 __all__ = ['ParamView', 'NodeParamView', 'EdgeParamView']
 
 # delegate almost all magic methods to the full array
@@ -40,13 +38,13 @@ class ParamViewMeta(abc.ABCMeta):
 
 class ParamView(object, metaclass=ParamViewMeta):
 
-    def __init__(self, name, instance, default=None):
+    def __init__(self, name, net, default=None):
         self._name = name
-        self._instance = instance
+        self._net = net
         self._default = default
 
     def __len__(self):
-        return len(self._instance)
+        return len(self._net)
 
     def __getattr__(self, attr):
         return getattr(self.array, attr)
@@ -78,7 +76,7 @@ class NodeParamView(ParamView):
 
     def __getitem__(self, item):
         def _get(node):
-            return self._instance.nodes[node].get(self._name, self._default)
+            return self._net.nodes[node].get(self._name, self._default)
 
         try:
             return _get(item)
@@ -88,9 +86,9 @@ class NodeParamView(ParamView):
 
     def __setitem__(self, item, value):
         def _set(node, value):
-            self._instance.nodes[node][self._name] = value
+            self._net.nodes[node][self._name] = value
 
-        if item in self._instance.nodes:
+        if item in self._net.nodes:
             _set(item, value)
         else:
             nodes = list(item)
@@ -103,10 +101,10 @@ class NodeParamView(ParamView):
 
     def set(self, value):
         if np.isscalar(value):
-            for node in self._instance:
+            for node in self._net:
                 self[node] = value
         else:
-            for node, v in zip(self._instance.nodes, value):
+            for node, v in zip(self._net.nodes, value):
                 self[node] = v
 
     @property
@@ -116,14 +114,14 @@ class NodeParamView(ParamView):
 
     @property
     def array(self):
-        return np.array([self[node] for node in self._instance])
+        return np.array([self[node] for node in self._net])
 
 
 class EdgeParamView(ParamView):
 
     def __getitem__(self, item):
         def _get(edge):
-            return self._instance.edges[edge].get(self._name, self._default)
+            return self._net.edges[edge].get(self._name, self._default)
 
         try:
             return _get(item)
@@ -133,9 +131,9 @@ class EdgeParamView(ParamView):
 
     def __setitem__(self, item, value):
         def _set(edge, value):
-            self._instance.edges[edge][self._name] = value
+            self._net.edges[edge][self._name] = value
 
-        if item in self._instance.edges:
+        if item in self._net.edges:
             _set(item, value)
         else:
             edges = list(item)
@@ -148,19 +146,19 @@ class EdgeParamView(ParamView):
 
     def set(self, value):
         if np.isscalar(value):
-            for edge in self._instance.edges():
+            for edge in self._net.edges():
                 self[edge] = value
         else:
-            nodes = list(self._instance)
+            nodes = list(self._net)
             value = np.array(value).reshape(self.shape)
-            if not self._instance.is_directed() and not np.all(
+            if not self._net.is_directed() and not np.all(
                     value == value.T):
-                raise EdgeParameterError(
+                raise ValueError(
                     f"Can't set edge param '{self._name}' with a "
                     f"non-symmetric matrix when graph is undirected.")
             for (i, j), v in np.ndenumerate(value):
                 node1, node2 = nodes[i], nodes[j]
-                if self._instance.has_edge(node1, node2):
+                if self._net.has_edge(node1, node2):
                     self[node1, node2] = v
 
     @property
@@ -171,10 +169,9 @@ class EdgeParamView(ParamView):
     @property
     def array(self):
         # map node to idx
-        idx = dict((node, i) for i, node in enumerate(self._instance))
-        n = len(self._instance)
+        idx = dict((node, i) for i, node in enumerate(self._net))
         arr = np.zeros(self.shape)
-        for u in self._instance:
-            for v in self._instance.neighbors(u):
+        for u in self._net:
+            for v in self._net.neighbors(u):
                 arr[idx[u], idx[v]] = self[u, v]
         return arr
