@@ -4,9 +4,11 @@ from paramnet.exceptions import *
 import paramnet.base
 from paramnet.base import *
 
-import paramnet.util
-from paramnet.util import *
+import paramnet.meta
+from paramnet.meta import *
 
+import paramnet.dict
 from paramnet.dict import *
 
+import paramnet.view
 from paramnet.view import *
