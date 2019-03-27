@@ -12,4 +12,3 @@ class ParametrizedNetworkError(Exception):
 
 class FieldConflictError(ParametrizedNetworkError):
     pass
-
