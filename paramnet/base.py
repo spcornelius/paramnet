@@ -1,6 +1,5 @@
 import networkx as nx
 
-from paramnet.dict import NodeDict, AdjlistOuterDict
 from paramnet.meta import ParametrizedMeta
 from paramnet.view import ParamView
 
@@ -11,9 +10,6 @@ __all__.extend([
 
 
 class Parametrized(object, metaclass=ParametrizedMeta):
-    _node = NodeDict()
-    _adj = AdjlistOuterDict()
-    _pred = AdjlistOuterDict()
 
     def __setattr__(self, attr_name, value):
         try:
