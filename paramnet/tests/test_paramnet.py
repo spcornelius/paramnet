@@ -17,6 +17,27 @@ def test_abc():
 
 
 @pytest.mark.parametrize("graph_cls", all_graph_types)
+def test_missing_params(graph_cls):
+    class A(Parametrized, graph_cls, node_params=['x'], edge_params=['y']):
+        pass
+
+    G = A()
+    G.add_node(0)
+    G.add_node(1, x=2)
+
+    assert G.x.dtype == np.dtype('float64')
+    assert np.isnan(G.x[0])
+    assert G.x[1] == 2.0
+
+    G.add_edge(0, 0, y=0.78)
+    G.add_edge(0, 1)
+
+    assert G.y.dtype == np.dtype('float64')
+    assert np.isnan(G.y[0, 1])
+    assert G.y[0, 0] == 0.78
+
+
+@pytest.mark.parametrize("graph_cls", all_graph_types)
 def test_node_order_and_index(graph_cls):
     class A(Parametrized, graph_cls):
         pass
