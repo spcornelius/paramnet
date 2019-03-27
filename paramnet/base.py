@@ -11,7 +11,6 @@ __all__.extend([
 
 
 class Parametrized(object, metaclass=ParametrizedMeta):
-
     _node = NodeDict()
     _adj = AdjlistOuterDict()
     _pred = AdjlistOuterDict()
@@ -30,7 +29,8 @@ class Parametrized(object, metaclass=ParametrizedMeta):
     def __delattr__(self, attr_name):
         attr = super().__getattribute__(attr_name)
         if isinstance(attr, ParamView):
-            raise AttributeError(f"Can't delete param attribute '{attr_name}'.")
+            raise AttributeError(
+                f"Can't delete param attribute '{attr_name}'.")
         else:
             super().__delattr__(attr_name)
 
