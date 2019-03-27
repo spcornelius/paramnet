@@ -2,22 +2,18 @@ paramnet
 ========
 
 ``paramnet`` provides a convenience mixin, `Parametrized`, for creating subclasses of
-NetworkX's `Graph` (`DiGraph`) that have expected parameters associated with each
-node and/or edge (e.g., in a network dynamical system). It provides a few key features:
+NetworkX's `Graph` (`DiGraph`) that have numeric parameters associated with nodes and
+edges (for example, a dynamical system on a network). It provides the following key features:
 
-* Enforces the existence of specified attributes for each node or edge
-* Allows easy acccess to the value of a parameter by node or edge, without navigating NetworkX's nested dict structure
-* Permits extracting a given parameter for all nodes (edges) as a 1D (2D) `numpy` array
-* This is accomplished by maintaining a well-defined order for the network nodes, complete with index lookup
+* Simplified reads/writes for the parameter value for a specific node/edge, without navigating NetworkX's nested dict structure
+* Enforcing a well-defined node order on the graph, which in turn allows...
+* Extraction of all values of a given node (edge) parameter as a 1D (2D) `numpy` array
 
-of specified named attributes for the (Di)Graph's nodes/edges, and also maintains
-a well-defined order for the nodes. This allows the user to extract a given node (edge)
-parameters as a well-defined vector (matrix).
 
 Examples
 --------
 A parametrized network class can be created by subclassing from `Graph` or `DiGraph`
-using the `Parametrized` mixin. The names of any node/edge parameters should be specified
+using the `Parametrized` mixin. The names of any node/edge parameters can be specified
 in the class definition:
 
 .. code:: python
@@ -30,29 +26,18 @@ in the class definition:
 
 Note: As with all mixins, `Parametrized` should be inherited from *first* as above.
 
-Instances of this class will enforce the existence of the parameters for all new nodes/edges.
-Trying to add nodes/edges without them raises a `NodeParameterError` or `EdgeParameterError`:
-
-.. code:: python
-
-    >>> G.add_node('a')
-    NodeParameterError: Tried to add node 'a' without all required parameters: ['x']
-
-    >>> G.add_nodes_from(['a', 'b'], x=100)
-    >>> G.add_edge('a', 'b')
-    EdgeParameterError: Tried to add edge ('a', 'b') without all required parameters: ['y']
-..
-
 `paramnet` automatically adds named fields for each declared parameter, supporting clean random
-access by node or edge
+access (both read and write) by node or edge
 
 .. code:: python
 
     >>> G.add_edge('a', 'b', y=3)
     >>> G.x['a']
     100
+    >>> G.x['a'] = 4
     >>> G.y['a', 'b']
     3
+    >>> G.y['a', 'b'] = 50
 ..
 
 Contrast this with the more cumbersome random access in base NetworkX (which can be used interchangeably if you wish):
@@ -61,8 +46,10 @@ Contrast this with the more cumbersome random access in base NetworkX (which can
 
     >>> G.nodes['a']['x']
     100
+    >>> G.nodes['a']['x'] = 4
     >>> G.edges['a', 'b']['y']
     3
+    >>> G.edges['a', 'b']['y'] = 50
 
 ..
 
@@ -80,9 +67,9 @@ What's more, `paramnet` maintains the order in which nodes were added, allowing 
 
 ..
 
-The fact that nodes are ordered also allows a well-defined representation of *all* values of
-a given node (edge) parameter as a vector (matrix). This can be obtained by accessing
-the associated attribute without square brackets.
+But that's not all. Because the nodes are ordered, we can get a well-defined representation of *all*
+values of a given node (edge) parameter at once as a vector (matrix). This is accomplished within `paramnet`
+by accessing the associated parameter attribute without square brackets:
 
 .. code:: python
 
@@ -97,13 +84,12 @@ the associated attribute without square brackets.
            [1., 0.]])
 ..
 
-Note the special case for the network adjacency matrix, which is automatically defined
-for every graph through the field `A` regardless of whether the associated edge attribute
-(`weight`) is listed among the required parameters.
+Note the special case for the weighted network adjacency matrix, which is automatically defined
+for every graph through the field `A` (instead of `weight`), regardless of whether `weight` is
+supplied in `edge_params`.
 
 Under the hood, the parameter fields return View objects that wrap most `numpy` functionality,
-allowing easy array operations on parameters including vector arithmetic and matrix
-multiplication:
+allowing vector arithmetic and other array operations
 
 .. code:: python
 
