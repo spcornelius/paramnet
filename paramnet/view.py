@@ -7,10 +7,10 @@ __all__ = ['ParamView', 'NodeParamView', 'EdgeParamView']
 # delegate almost all magic methods to the full array
 # (omit in-place ops + a few others like __len__ that we will special
 # case)
-_delegated_mms = ['abs', 'add', 'and', 'array', 'bool', 'complex',
+_delegated_mms = ['abs', 'add', 'and', 'bool', 'complex',
                   'contains', 'copy', 'deepcopy', 'divmod', 'eq',
                   'float', 'floordiv', 'format', 'ge', 'gt',
-                  'index', 'int', 'invert', 'iter', 'le', 'lshift',
+                  'index', 'int', 'invert', 'le', 'lshift',
                   'lt', 'matmul', 'mod', 'mul', 'ne', 'neg', 'or',
                   'pos', 'pow', 'radd', 'rand', 'rdivmod', 'reduce',
                   'reduce_ex', 'repr', 'rfloordiv', 'rlshift', 'rmatmul',
@@ -46,8 +46,8 @@ class ParamView(object, metaclass=ParamViewMeta):
     def __len__(self):
         return len(self._net)
 
-    def __getattr__(self, attr):
-        return getattr(self.array, attr)
+    def __iter__(self):
+        yield from self.array
 
     @abc.abstractmethod
     def set(self, value):
