@@ -248,3 +248,21 @@ def test_graph_params(graph_cls):
     G.a = 200.0
     assert G.a == 200.0
     assert G.graph["a"] == 200.0
+
+
+@pytest.mark.parametrize("graph_cls", all_graph_types)
+def test_param_inheritance(graph_cls):
+    class A(Parametrized, graph_cls, node_params=['a'], edge_params=['b'],
+            graph_params=['c']):
+        pass
+
+    class B(A, node_params=['d'], edge_params=['e'], graph_params=['f']):
+        pass
+
+    assert {'a'} == A._node_params
+    assert {'b'} == A._edge_params
+    assert {'c'} == A._graph_params
+
+    assert {'a', 'd'} == B._node_params
+    assert {'b', 'e'} == B._edge_params
+    assert {'c', 'f'} == B._graph_params
