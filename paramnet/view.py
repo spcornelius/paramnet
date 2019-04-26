@@ -62,6 +62,10 @@ class ParamView(object, metaclass=ParamViewMeta):
         pass
 
     @property
+    def dtype(self):
+        return self.array.dtype
+
+    @property
     @abc.abstractmethod
     def shape(self):
         pass
