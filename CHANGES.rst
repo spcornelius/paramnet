@@ -1,3 +1,7 @@
+v2.2.0
+======
+- Allow access to all numpy attrs of parameter arrays
+
 v2.1.0
 ======
 - Support for graph-wide params
