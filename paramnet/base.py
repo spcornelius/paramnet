@@ -11,16 +11,25 @@ __all__.extend([
 
 class Parametrized(object, metaclass=ParametrizedMeta):
 
-    def __setattr__(self, attr_name, value):
-        try:
-            attr = super().__getattribute__(attr_name)
-        except (AttributeError, KeyError):
-            attr = None
-
-        if isinstance(attr, ParamView):
-            attr.set(value)
+    def __getattr__(self, attr_name):
+        if attr_name in self._graph_params:
+            return self.graph[attr_name]
         else:
-            super().__setattr__(attr_name, value)
+            return super().__getattr__(attr_name)
+
+    def __setattr__(self, attr_name, value):
+        if attr_name in self._graph_params:
+            self.graph[attr_name] = value
+        else:
+            try:
+                attr = super().__getattribute__(attr_name)
+            except (AttributeError, KeyError):
+                attr = None
+
+            if isinstance(attr, ParamView):
+                attr.set(value)
+            else:
+                super().__setattr__(attr_name, value)
 
     def __delattr__(self, attr_name):
         attr = super().__getattribute__(attr_name)
