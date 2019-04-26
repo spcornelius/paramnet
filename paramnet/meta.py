@@ -15,24 +15,27 @@ class ParametrizedMeta(type):
 
     def __new__(mcs, name, bases, attrs, node_params=None, edge_params=None,
                 graph_params=None, *args, **kwargs):
-        return super().__new__(mcs, name, bases, attrs, *args, **kwargs)
-
-    def __init__(cls, name, bases, attrs, node_params=None, edge_params=None,
-                 graph_params=None, *args, **kwargs):
-        super().__init__(name, bases, attrs, *args, **kwargs)
-
         if node_params is None:
-            node_params = []
+            node_params = set()
         if edge_params is None:
-            edge_params = []
+            edge_params = set()
         if graph_params is None:
-            graph_params = []
+            graph_params = set()
 
-        cls._node_params = frozenset(node_params)
-        cls._edge_params = frozenset(edge_params)
-        cls._graph_params = frozenset(graph_params)
+        def getattr_union(attr):
+            return set.union(*[getattr(b, attr, set()) for b in bases])
 
-        cls.node_dict_factory = OrderedDict
+        attrs['_node_params'] = getattr_union('_node_params')
+        attrs['_edge_params'] = getattr_union('_edge_params')
+        attrs['_graph_params'] = getattr_union('_graph_params')
+
+        attrs['_node_params'].update(node_params)
+        attrs['_edge_params'].update(edge_params)
+        attrs['_graph_params'].update(graph_params)
+
+        attrs['node_dict_factory'] = OrderedDict
+
+        return super().__new__(mcs, name, bases, attrs, *args, **kwargs)
 
     def __call__(cls, *args, **kwargs):
         if not issubclass(cls, nx.Graph):
