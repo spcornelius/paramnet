@@ -1,3 +1,8 @@
+v2.3.0
+======
+- Inheritance of node/graph/edge parameters
+- Minor bugfix
+
 v2.2.0
 ======
 - Allow access to all numpy attrs of parameter arrays
