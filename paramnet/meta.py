@@ -28,9 +28,9 @@ class ParametrizedMeta(type):
         if graph_params is None:
             graph_params = []
 
-        cls._node_params = tuple(node_params)
-        cls._edge_params = tuple(edge_params)
-        cls._graph_params = tuple(graph_params)
+        cls._node_params = frozenset(node_params)
+        cls._edge_params = frozenset(edge_params)
+        cls._graph_params = frozenset(graph_params)
 
         cls.node_dict_factory = OrderedDict
 
