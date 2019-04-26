@@ -1,3 +1,7 @@
+v2.1.0
+======
+- Support for graph-wide params
+
 v2.0.0
 ======
 - Simplified interface
