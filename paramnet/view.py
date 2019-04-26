@@ -49,6 +49,9 @@ class ParamView(object, metaclass=ParamViewMeta):
     def __iter__(self):
         yield from self.array
 
+    def __getattr__(self, attr_name):
+        return getattr(self.array, attr_name)
+
     @abc.abstractmethod
     def set(self, value):
         pass
@@ -60,10 +63,6 @@ class ParamView(object, metaclass=ParamViewMeta):
     @abc.abstractmethod
     def __setitem__(self, item, value):
         pass
-
-    @property
-    def dtype(self):
-        return self.array.dtype
 
     @property
     @abc.abstractmethod
