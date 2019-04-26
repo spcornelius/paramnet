@@ -14,20 +14,23 @@ __all__.extend([
 class ParametrizedMeta(type):
 
     def __new__(mcs, name, bases, attrs, node_params=None, edge_params=None,
-                *args, **kwargs):
+                graph_params=None, *args, **kwargs):
         return super().__new__(mcs, name, bases, attrs, *args, **kwargs)
 
     def __init__(cls, name, bases, attrs, node_params=None, edge_params=None,
-                 *args, **kwargs):
+                 graph_params=None, *args, **kwargs):
         super().__init__(name, bases, attrs, *args, **kwargs)
 
         if node_params is None:
             node_params = []
         if edge_params is None:
             edge_params = []
+        if graph_params is None:
+            graph_params = []
 
         cls._node_params = tuple(node_params)
         cls._edge_params = tuple(edge_params)
+        cls._graph_params = tuple(graph_params)
 
         cls.node_dict_factory = OrderedDict
 
