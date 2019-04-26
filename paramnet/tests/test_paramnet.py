@@ -234,3 +234,17 @@ def test_adj(graph_cls):
     else:
         d = [G.degree(x) for x in G]
         assert np.allclose(d, G.A @ one)
+
+
+@pytest.mark.parametrize("graph_cls", all_graph_types)
+def test_graph_params(graph_cls):
+    class A(Parametrized, graph_cls, graph_params=['a']):
+        pass
+
+    G = A()
+    G.graph["a"] = 100.0
+    assert G.a == 100.0
+
+    G.a = 200.0
+    assert G.a == 200.0
+    assert G.graph["a"] == 200.0
