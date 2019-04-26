@@ -15,7 +15,7 @@ class Parametrized(object, metaclass=ParametrizedMeta):
         if attr_name in self._graph_params:
             return self.graph[attr_name]
         else:
-            return super().__getattr__(attr_name)
+            raise AttributeError(attr_name)
 
     def __setattr__(self, attr_name, value):
         if attr_name in self._graph_params:
