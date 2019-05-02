@@ -7,16 +7,25 @@ __all__ = ['ParamView', 'NodeParamView', 'EdgeParamView']
 # delegate almost all magic methods to the full array
 # (omit in-place ops + a few others like __len__ that we will special
 # case)
-_delegated_mms = ['abs', 'add', 'and', 'bool', 'complex',
-                  'contains', 'copy', 'deepcopy', 'divmod', 'eq',
-                  'float', 'floordiv', 'format', 'ge', 'gt',
-                  'index', 'int', 'invert', 'le', 'lshift',
-                  'lt', 'matmul', 'mod', 'mul', 'ne', 'neg', 'or',
-                  'pos', 'pow', 'radd', 'rand', 'rdivmod', 'reduce',
-                  'reduce_ex', 'repr', 'rfloordiv', 'rlshift', 'rmatmul',
-                  'rmod', 'rmul', 'ror', 'rpow', 'rrshift', 'rsub',
-                  'rtruediv', 'rxor', 'sizeof', 'str', 'sub', 'truediv',
-                  'xor']
+_delegated_dunders = ['abs', 'add', 'and', 'bool', 'complex',
+                      'contains', 'copy', 'deepcopy', 'divmod', 'eq',
+                      'float', 'floordiv', 'format', 'ge', 'gt',
+                      'index', 'int', 'invert', 'le', 'lshift',
+                      'lt', 'matmul', 'mod', 'mul', 'ne', 'neg', 'or',
+                      'pos', 'pow', 'radd', 'rand', 'rdivmod', 'reduce',
+                      'reduce_ex', 'repr', 'rfloordiv', 'rlshift', 'rmatmul',
+                      'rmod', 'rmul', 'ror', 'rpow', 'rrshift', 'rsub',
+                      'rtruediv', 'rxor', 'sizeof', 'str', 'sub', 'truediv',
+                      'xor']
+
+_delegated_methods = ['T', 'all', 'any', 'argmax', 'argmin', 'choose',
+                      'conj', 'conjugate', 'copy', 'cumprod', 'cumsum',
+                      'diagonal', 'dot', 'dtype', 'flat', 'flatten',
+                      'imag', 'max', 'mean', 'min', 'ndim', 'nonzero',
+                      'prod', 'ravel', 'real', 'repeat', 'reshape',
+                      'round', 'searchsorted', 'sort', 'squeeze', 'std',
+                      'sum', 'tofile', 'tolist', 'tostring', 'trace',
+                      'transpose', 'var']
 
 
 def delegated_to_numpy(method_name):
@@ -31,9 +40,12 @@ class ParamViewMeta(abc.ABCMeta):
 
     def __init__(cls, name, bases, attrs):
         super().__init__(name, bases, attrs)
-        for mm in _delegated_mms:
-            mm = f"__{mm}__"
-            setattr(cls, mm, delegated_to_numpy(mm))
+        for attr in _delegated_dunders:
+            attr = f"__{attr}__"
+            setattr(cls, attr, delegated_to_numpy(attr))
+
+        for attr in _delegated_methods:
+            setattr(cls, attr, delegated_to_numpy(attr))
 
 
 class ParamView(object, metaclass=ParamViewMeta):
@@ -48,9 +60,6 @@ class ParamView(object, metaclass=ParamViewMeta):
 
     def __iter__(self):
         yield from self.array
-
-    def __getattr__(self, attr_name):
-        return getattr(self.array, attr_name)
 
     @abc.abstractmethod
     def set(self, value):
