@@ -25,6 +25,7 @@ before_install:
       conda update -q conda;
       conda create -n myenv python=$PYTHON anaconda;
       source activate myenv;
+      conda install pip;
     fi
 install:
   - python -m pip install .[all]
