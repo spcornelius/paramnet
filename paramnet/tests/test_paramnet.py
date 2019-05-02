@@ -25,14 +25,14 @@ def test_missing_params(graph_cls):
     G.add_node(0)
     G.add_node(1, x=2)
 
-    assert G.x.dtype == np.dtype('float64')
+    assert G.x.dtype == np.float
     assert np.isnan(G.x[0])
     assert G.x[1] == 2.0
 
     G.add_edge(0, 0, y=0.78)
     G.add_edge(0, 1)
 
-    assert G.y.dtype == np.dtype('float64')
+    assert G.y.dtype == np.float
     assert np.isnan(G.y[0, 1])
     assert G.y[0, 0] == 0.78
 
